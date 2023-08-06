@@ -1,2 +1,2 @@
 # Portfolio
- Samples of my projects
+Programming Project Samples
