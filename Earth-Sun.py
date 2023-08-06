@@ -1,5 +1,6 @@
 # Creating 3D animated trajectory of the Earth as it orbits the Sun
-# Using Semi-Implicit Euler Integration Method looping for calculation
+# Using Semi-Implicit Euler Integration Method looping for calculation over 1000 data points
+# Output file saved in "earth_trajectory.gif"
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -15,74 +16,38 @@ def F_ES(r_E):
     r_norm = np.linalg.norm(r_E)
     return -G * M_SUN / r_norm**3 * r_E
 
-def F_EM(r_M, r_E):
-    # Calculate the gravitational force on the Moon exerted by the Earth
-    r_norm = np.linalg.norm(r_M - r_E)
-    return G * M_EARTH * M_MOON / r_norm**3 * (r_E - r_M)
-
-def integrate_earth_moon(tmax, dt=1e-3):
-    # Initial conditions for the Earth
+def integrate_earth(tmax, dt=1e-3):
+    # Initial conditions
     r_E = np.array([1.0, 0.0, 0.0])  # Initial position of Earth (distance from Sun to Earth in AU)
     v_E = np.array([0.0, 2.0 * np.pi, 0.0])  # Initial velocity of Earth (perpendicular to the position vector in AU/yr)
 
-    # Initial conditions for the Moon (relative to the Earth)
-    r_M_relative = np.array([R_EARTH_MOON, 0.0, 0.0])  # Initial position of the Moon relative to Earth in AU
-    v_M_relative = np.array([0.0, V_EARTH_MOON, 0.0])  # Initial velocity of the Moon relative to Earth in AU/yr
-
-    # Lists to store the trajectory of Earth and the Moon
+    # Lists to store the trajectory
     trajectory_r_E = [r_E]
-    trajectory_r_M = [r_E + r_M_relative]  # Initialize the Moon's position relative to the Sun
 
     # Integration loop
     t = 0
     while t < tmax:
-        # Calculate forces on the Earth and the Moon
-        F_E = F_ES(r_E)
-        F_M = F_EM(trajectory_r_M[-1], r_E)
-
-        # Update Earth's position and velocity
-        v_E_next = v_E + dt * F_E
+        F = F_ES(r_E)
+        v_E_next = v_E + dt * F
         r_E_next = r_E + dt * v_E_next
-
-        # Update Moon's position and velocity relative to Earth
-        v_M_relative_next = v_M_relative + dt * F_M / M_MOON
-        r_M_relative_next = r_M_relative + dt * v_M_relative_next
-
-        # Update Moon's absolute position (relative to the Sun)
-        r_M_next = r_E_next + r_M_relative_next
-
-        # Append positions to the trajectories
         trajectory_r_E.append(r_E_next)
-        trajectory_r_M.append(r_M_next)
-
-        # Update variables for the next iteration
         r_E = r_E_next
         v_E = v_E_next
-        r_M_relative = r_M_relative_next
-        v_M_relative = v_M_relative_next
-
         t += dt
 
-    return np.array(trajectory_r_E), np.array(trajectory_r_M)
-
+    return np.array(trajectory_r_E)
 
 # Time interval and time step
 tmax = 1.0  # One year in years (since we are using AU and solar masses)
 dt = 1e-3  # 1 millisecond in years
 
-# Calculate the trajectory of Earth and Moon
-trajectory_earth, trajectory_moon = integrate_earth_moon(tmax, dt)
+# Calculate the trajectory of Earth
+trajectory = integrate_earth(tmax, dt)
 
-# Extract x, y, and z coordinates from the trajectories
-x_coords = trajectory_earth[:, 0]
-y_coords = trajectory_earth[:, 1]
-z_coords = trajectory_earth[:, 2]
-
-moon_x_coords = trajectory_moon[:, 0]
-moon_y_coords = trajectory_moon[:, 1]
-moon_z_coords = trajectory_moon[:, 2]
-
-# ... (The rest of your animation code remains the same)
+# Extract x, y, and z coordinates from the trajectory
+x_coords = trajectory[:, 0]
+y_coords = trajectory[:, 1]
+z_coords = trajectory[:, 2]
 
 # Create a function to update the plot in each animation frame
 def update(frame):
@@ -112,3 +77,4 @@ ani.save('earth_trajectory.gif', writer='pillow')
 
 # Display the animation
 plt.show()
+
