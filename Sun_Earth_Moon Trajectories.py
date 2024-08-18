@@ -1,16 +1,21 @@
 # This is to be the 3D animated trajectory of the Earth as it orbits the Sun, and the Moon as it orbits the Earth around the Sun.
 # This is intended to add the trajectory of the Moon to the Earth-Sun system as programmed in the file
 # titled Earth-Sun.py
-# This is WIP
 
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 from mpl_toolkits.mplot3d import Axes3D
 
+#ADDED USING CHATGPT on 8-17-24
 # Constants
 G = 39.478  # Gravitational constant in (AU^3)/(Msun * yr^2)
 M_SUN = 1.0  # Mass of the Sun in solar masses
+M_EARTH = 3.003e-6  # Mass of the Earth in solar masses
+M_MOON = 3.694e-8  # Mass of the Moon in solar masses
+R_EARTH_MOON = 2.57e-3  # Average distance from Earth to Moon in AU
+V_EARTH_MOON = 2.7e-2  # Average relative velocity of Moon in AU/yr
+
 
 def F_ES(r_E):
     # Calculate the gravitational force on Earth exerted by the Sun
