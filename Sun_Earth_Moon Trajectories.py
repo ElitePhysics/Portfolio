@@ -115,7 +115,7 @@ ax = fig.add_subplot(111, projection='3d')
 ani = FuncAnimation(fig, update, frames=len(x_coords), interval=50, repeat=False)
 
 # Save the animation as a series of images using Pillow
-ani.save('earth_trajectory.gif', writer='pillow')
+ani.save('earth_sun_moon_trajectory.gif', writer='pillow')
 
 # Display the animation
 plt.show()
